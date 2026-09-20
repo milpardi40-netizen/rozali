@@ -48,7 +48,9 @@ src/
     page.tsx               # homepage — sections driven by admin config
     patterns/ shop/ artists/ portfolio/ academy/ styles/ spaces/ collections/
     stories/ projects/ custom/ about/ contact/ faq/ returns/ legal/[doc]/
-    login/ signup/ account/ favorites/ checkout/ search/ creators/join/ admin/
+    login/ signup/ account/ favorites/ checkout/ search/ creators/join/
+    owner/                 # owner-only content management (OWNER_EMAIL)
+  app/admin/[locale]/      # admin panel — its own layout + login, mounted at /admin/{locale}
   app/api/                 # newsletter, contact, admin content, auth, search-index, health
   app/sitemap.ts robots.ts # generated SEO files (use NEXT_PUBLIC_SITE_URL)
   components/
@@ -83,7 +85,11 @@ public/
 
 ## Admin
 
-Sign in at `/{locale}/login` with the admin account → `/{locale}/admin`.
+The panel lives at **`/admin/{locale}`** (e.g. `/admin/fa`) with its own login page at
+`/admin/{locale}/login` — it is *not* under the site's locale prefix. Bare `/admin` and the
+legacy `/{locale}/admin` both redirect there (`src/middleware.ts`).
+Sign in with the admin account (`ADMIN_EMAIL` / `ADMIN_PASSWORD`; in local dev without those env
+vars, any `admin@…` email plus a ≥4-character password).
 Manage: homepage sections (order/visibility), hero, categories/styles, pattern/product/artist/
 portfolio/education flags & ordering, banners, SEO. Every save is live immediately (all pages are dynamic).
 

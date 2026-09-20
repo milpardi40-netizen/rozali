@@ -8,8 +8,31 @@ function isOwnerEmail(email: string): boolean {
   return email.toLowerCase() === ownerEmail;
 }
 
+/** زبان ترجیحی کاربر: کوکی `ra-locale` و در نبود آن زبان پیش‌فرض. */
+function preferredLocale(req: NextRequest): string {
+  const cookie = req.cookies.get("ra-locale")?.value;
+  return LOCALES.includes(cookie as never) ? cookie! : DEFAULT_LOCALE;
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  /* -------- میان‌برهای ورود به پنل ادمین -------- */
+  // مسیر واقعی پنل `/admin/[locale]` است. دو آدرس رایج اما نامعتبر
+  // (`/admin` خالی و `/{locale}/admin` که در مستندات قدیمی آمده) به آن هدایت
+  // می‌شوند تا کاربر به صفحهٔ ۴۰۴ نرسد.
+  if (pathname === "/admin" || pathname === "/admin/") {
+    const url = req.nextUrl.clone();
+    url.pathname = `/admin/${preferredLocale(req)}`;
+    return NextResponse.redirect(url);
+  }
+
+  const legacyAdmin = pathname.match(/^\/([a-z-]+)\/admin(\/.*)?$/);
+  if (legacyAdmin && LOCALES.includes(legacyAdmin[1] as never)) {
+    const url = req.nextUrl.clone();
+    url.pathname = `/admin/${legacyAdmin[1]}${legacyAdmin[2] ?? ""}`;
+    return NextResponse.redirect(url);
+  }
 
   /* -------- مسیرهای پنل ادمین (/admin/[locale]/) -------- */
   // این مسیرها از layout سایت جدا هستند
@@ -35,8 +58,7 @@ export async function middleware(req: NextRequest) {
   /* -------- i18n locale prefix (برای مسیرهای سایت اصلی) -------- */
   const hasLocale = LOCALES.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`));
   if (!hasLocale) {
-    const cookie = req.cookies.get("ra-locale")?.value;
-    const locale = LOCALES.includes(cookie as never) ? cookie : DEFAULT_LOCALE;
+    const locale = preferredLocale(req);
     const url = req.nextUrl.clone();
     url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
     return NextResponse.redirect(url);

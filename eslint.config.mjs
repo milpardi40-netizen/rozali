@@ -15,8 +15,12 @@ const eslintConfig = [
     ignores: [
       "node_modules/**",
       ".next/**",
+      // `next.config.ts` sets distDir to "dist/.next" and output to "standalone",
+      // so build artifacts land in dist/ — linting them only reports noise.
+      "dist/**",
       "out/**",
       "build/**",
+      "data/**",
       "next-env.d.ts",
     ],
   },

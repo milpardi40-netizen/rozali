@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/States";
 import { SESSION_FETCH } from "@/lib/http";
-import { faNum, formatPrice, href } from "@/lib/utils";
+import { adminHref, faNum, formatPrice, href } from "@/lib/utils";
 import type { Order } from "@/lib/data/orders";
 import type { AcademyReservation } from "@/lib/types";
 
@@ -152,7 +152,7 @@ export function AccountView() {
     { href: href(locale, "/favorites"), icon: <Heart className="h-4 w-4" />, label: fa ? "علاقه‌مندی‌ها" : "Favorites" },
     { href: href(locale, "/checkout"), icon: <ShoppingBag className="h-4 w-4" />, label: fa ? "سبد خرید" : "Cart" },
     ...(user.role === "artist" || user.role === "admin" ? [{ href: href(locale, "/artist"), icon: <Palette className="h-4 w-4" />, label: fa ? "داشبورد هنرمند" : "Artist Dashboard" }] : []),
-    ...(user.role === "admin" ? [{ href: href(locale, "/admin"), icon: <ShieldCheck className="h-4 w-4" />, label: fa ? "پنل مدیریت" : "Admin Panel" }] : []),
+    ...(user.role === "admin" ? [{ href: adminHref(locale), icon: <ShieldCheck className="h-4 w-4" />, label: fa ? "پنل مدیریت" : "Admin Panel" }] : []),
   ];
 
   /* ---- initials avatar ---- */
