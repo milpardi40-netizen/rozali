@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
     // Nothing on this site renders wider than 2×1920; capping the list trims ~40% off each <img>.
     deviceSizes: [640, 750, 1080, 1200, 1920, 2560, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Only these qualities are ever requested: 75 is Next's default (used by most
+    // <Image> tags), the rest are the explicit values in Hero/PfHero/PfAbout/PfAcademic.
+    // Listing them silences the Next 16 "unconfigured qualities" deprecation warning and
+    // keeps the optimizer from rejecting a legitimate request.
+    qualities: [75, 85, 90, 95, 100],
   },
 };
 
