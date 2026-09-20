@@ -565,8 +565,18 @@ export const collections: Collection[] = [
  *
  * `app/[locale]/page.tsx` renders sections **in this order**, so this array (and
  * whatever the admin panel saves over it) is the single source of truth for the
- * page layout. Tones alternate on purpose: two `bg-background-secondary` or two
- * dark sections next to each other visually fuse into one block.
+ * page layout.
+ *
+ * Ordering rules this list follows:
+ *   1. Semantic clusters stay contiguous — browse (styles/spaces), shop
+ *      (newPatterns/bestSellers/exclusive), creators (artists/portfolios/stories),
+ *      then academy → B2B → newsletter. Nothing jumps between clusters.
+ *   2. Tones alternate. Two `bg-background-secondary` or two dark sections next
+ *      to each other fuse into one visual band, so `styles` (tinted) and
+ *      `exclusive` (dark) act as separators and are never neighbours.
+ *   3. Freshness before social proof: "تازه‌ها" precedes "پرفروش‌ترین‌ها".
+ *   4. A disabled duplicate keeps its slot next to the section it repeated, so
+ *      re-enabling it from Admin → Home sections lands it somewhere sensible.
  *
  * Three keys ship **disabled** because they repeated content already on the page:
  *   categories — rendered `site.spaces`: the same 6 items, same images, same
@@ -582,19 +592,25 @@ export const collections: Collection[] = [
  */
 export const homeSections: HomeSection[] = (
   [
+    // hero — dark, full viewport, sticky
     ["hero", true],
+    // the product itself, straight under the hero CTA ("کاوش الگوها")
     ["discovery", true],
+    ["trending", false],
+    // browse rails: by style, then by room
     ["styles", true],
     ["categories", false],
     ["spaces", true],
-    ["trending", false],
+    // shop cluster, closed by the dark "exclusive" statement
+    ["newPatterns", true],
+    ["bestSellers", true],
+    ["exclusive", true],
+    // creators & proof of real work
     ["artists", true],
     ["portfolios", true],
     ["projects", false],
-    ["exclusive", true],
-    ["bestSellers", true],
-    ["newPatterns", true],
     ["stories", true],
+    // academy → business → conversion
     ["education", true],
     ["b2b", true],
     ["custom", true],
