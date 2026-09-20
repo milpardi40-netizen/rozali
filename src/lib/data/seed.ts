@@ -560,9 +560,63 @@ export const collections: Collection[] = [
   { id: "col-evening-spaces", slug: "evening-spaces", title: L("فضاهای شبانه", "Evening Spaces"), description: L("کاغذدیواری لوکس، پرده مخمل و دکور با عمق فلزی.", "Luxury wallpaper, velvet curtains and décor with metallic depth."), cover: "/images/products/wallpaper-damask.jpg", patternIds: ["pattern-copper-damask", "pattern-arc-lattice", "pattern-lapis-eslimi"], productIds: ["product-wallpaper-copper-damask", "product-curtain-copper-damask", "product-decor-atelier-lamp", "product-wallpaper-lapis-eslimi"] },
 ];
 
-export const homeSections: HomeSection[] = [
-  "hero", "discovery", "categories", "trending", "bestSellers", "newPatterns", "artists", "portfolios", "styles", "spaces", "exclusive", "education", "stories", "projects", "b2b", "custom", "newsletter",
-].map((key, i) => ({ key: key as HomeSection["key"], enabled: true, order: i + 1 }));
+/**
+ * Homepage layout — order & visibility of every section.
+ *
+ * `app/[locale]/page.tsx` renders sections **in this order**, so this array (and
+ * whatever the admin panel saves over it) is the single source of truth for the
+ * page layout.
+ *
+ * Ordering rules this list follows:
+ *   1. Semantic clusters stay contiguous — browse (styles/spaces), shop
+ *      (newPatterns/bestSellers/exclusive), creators (artists/portfolios/stories),
+ *      then academy → B2B → newsletter. Nothing jumps between clusters.
+ *   2. Tones alternate. Two `bg-background-secondary` or two dark sections next
+ *      to each other fuse into one visual band, so `styles` (tinted) and
+ *      `exclusive` (dark) act as separators and are never neighbours.
+ *   3. Freshness before social proof: "تازه‌ها" precedes "پرفروش‌ترین‌ها".
+ *   4. A disabled duplicate keeps its slot next to the section it repeated, so
+ *      re-enabling it from Admin → Home sections lands it somewhere sensible.
+ *
+ * Three keys ship **disabled** because they repeated content already on the page:
+ *   categories — rendered `site.spaces`: the same 6 items, same images, same
+ *                `/spaces/{slug}` links and same "view all" target as `spaces`;
+ *                only the layout differed (icon grid vs carousel). Real category
+ *                browsing is what `styles` does.
+ *   trending   — every trending pattern is also `featured`, so all 4 cards
+ *                repeated `discovery`, rendered directly above it.
+ *   projects   — every `isProject` portfolio is also `featured`, so all 3 cards
+ *                repeated `portfolios`; the titles ("پروژه‌های منتخب" vs
+ *                "پورتفولیوهای منتخب") said nearly the same thing too.
+ * Nothing is deleted — re-enable any of them from Admin → Home sections.
+ */
+export const homeSections: HomeSection[] = (
+  [
+    // hero — dark, full viewport, sticky
+    ["hero", true],
+    // the product itself, straight under the hero CTA ("کاوش الگوها")
+    ["discovery", true],
+    ["trending", false],
+    // browse rails: by style, then by room
+    ["styles", true],
+    ["categories", false],
+    ["spaces", true],
+    // shop cluster, closed by the dark "exclusive" statement
+    ["newPatterns", true],
+    ["bestSellers", true],
+    ["exclusive", true],
+    // creators & proof of real work
+    ["artists", true],
+    ["portfolios", true],
+    ["projects", false],
+    ["stories", true],
+    // academy → business → conversion
+    ["education", true],
+    ["b2b", true],
+    ["custom", true],
+    ["newsletter", true],
+  ] as [HomeSection["key"], boolean][]
+).map(([key, enabled], i) => ({ key, enabled, order: i + 1 }));
 
 export const banners: Banner[] = [
   { id: "banner-free-shipping", title: L("ارسال رایگان", "Free shipping"), text: L("برای سفارش‌های کالکشن اختصاصی بالای ۲ میلیون تومان", "On exclusive collection orders over $120"), href: "/shop", enabled: true, placement: "shop" },

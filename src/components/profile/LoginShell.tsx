@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Logo } from "@/components/layout/Logo";
-import { href } from "@/lib/utils";
+import { adminHref, href } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/types";
 import { AuthForm } from "./AuthForm";
 import { useAuth } from "@/components/providers/AppProviders";
@@ -125,7 +125,7 @@ export function LoginShell({ locale, image, dict }: LoginShellProps) {
                 autoSubmitting={isSubmitting}
               />
               <p className="auth-card__admin-link">
-                <Link href={href(locale, "/admin")}>
+                <Link href={adminHref(locale, "/login")}>
                   {dict.admin}
                 </Link>
               </p>

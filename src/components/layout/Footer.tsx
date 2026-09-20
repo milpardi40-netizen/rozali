@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Camera, Mail, MapPin, Phone, Send } from "lucide-react";
 import { useAuth, useLocale, useTheme } from "@/components/providers/AppProviders";
-import { href } from "@/lib/utils";
+import { href, resolveHref } from "@/lib/utils";
 import { Logo } from "./Logo";
 import { NewsletterForm } from "./NewsletterForm";
 import { usePathname } from "next/navigation";
@@ -56,7 +56,7 @@ export function Footer() {
                 <ul className="mt-4 space-y-2.5">
                   {c.links.map(([label, path]) => (
                     <li key={path}>
-                      <Link href={href(locale, path)} className="text-sm text-foreground-secondary transition-colors hover:text-foreground">{label}</Link>
+                      <Link href={resolveHref(locale, path)} className="text-sm text-foreground-secondary transition-colors hover:text-foreground">{label}</Link>
                     </li>
                   ))}
                 </ul>

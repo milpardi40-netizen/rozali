@@ -40,6 +40,29 @@ export function href(locale: Locale, path: string) {
   return `${basePath}/${locale}${clean === "/" ? "" : clean}`;
 }
 
+/**
+ * The admin panel lives at `/admin/[locale]` — outside the site layout — so it
+ * must NOT be built with `href()`, which would produce the non-existent
+ * `/{locale}/admin`. Use this helper for every link into the panel.
+ */
+export function adminHref(locale: Locale, path: string = "/") {
+  const clean = path.startsWith("/") ? path : `/${path}`;
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  return `${basePath}/admin/${locale}${clean === "/" ? "" : clean}`;
+}
+
+/**
+ * Resolve a navigation path that may point at either the site or the admin
+ * panel: `/admin…` is routed through `adminHref()`, everything else through
+ * `href()`. Handy for link lists that mix both (e.g. the footer).
+ */
+export function resolveHref(locale: Locale, path: string) {
+  if (path === "/admin" || path.startsWith("/admin/")) {
+    return adminHref(locale, path.slice("/admin".length) || "/");
+  }
+  return href(locale, path);
+}
+
 export function slugify(s: string) {
   return s
     .toLowerCase()
