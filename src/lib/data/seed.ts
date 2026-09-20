@@ -560,9 +560,47 @@ export const collections: Collection[] = [
   { id: "col-evening-spaces", slug: "evening-spaces", title: L("فضاهای شبانه", "Evening Spaces"), description: L("کاغذدیواری لوکس، پرده مخمل و دکور با عمق فلزی.", "Luxury wallpaper, velvet curtains and décor with metallic depth."), cover: "/images/products/wallpaper-damask.jpg", patternIds: ["pattern-copper-damask", "pattern-arc-lattice", "pattern-lapis-eslimi"], productIds: ["product-wallpaper-copper-damask", "product-curtain-copper-damask", "product-decor-atelier-lamp", "product-wallpaper-lapis-eslimi"] },
 ];
 
-export const homeSections: HomeSection[] = [
-  "hero", "discovery", "categories", "trending", "bestSellers", "newPatterns", "artists", "portfolios", "styles", "spaces", "exclusive", "education", "stories", "projects", "b2b", "custom", "newsletter",
-].map((key, i) => ({ key: key as HomeSection["key"], enabled: true, order: i + 1 }));
+/**
+ * Homepage layout — order & visibility of every section.
+ *
+ * `app/[locale]/page.tsx` renders sections **in this order**, so this array (and
+ * whatever the admin panel saves over it) is the single source of truth for the
+ * page layout. Tones alternate on purpose: two `bg-background-secondary` or two
+ * dark sections next to each other visually fuse into one block.
+ *
+ * Three keys ship **disabled** because they repeated content already on the page:
+ *   categories — rendered `site.spaces`: the same 6 items, same images, same
+ *                `/spaces/{slug}` links and same "view all" target as `spaces`;
+ *                only the layout differed (icon grid vs carousel). Real category
+ *                browsing is what `styles` does.
+ *   trending   — every trending pattern is also `featured`, so all 4 cards
+ *                repeated `discovery`, rendered directly above it.
+ *   projects   — every `isProject` portfolio is also `featured`, so all 3 cards
+ *                repeated `portfolios`; the titles ("پروژه‌های منتخب" vs
+ *                "پورتفولیوهای منتخب") said nearly the same thing too.
+ * Nothing is deleted — re-enable any of them from Admin → Home sections.
+ */
+export const homeSections: HomeSection[] = (
+  [
+    ["hero", true],
+    ["discovery", true],
+    ["styles", true],
+    ["categories", false],
+    ["spaces", true],
+    ["trending", false],
+    ["artists", true],
+    ["portfolios", true],
+    ["projects", false],
+    ["exclusive", true],
+    ["bestSellers", true],
+    ["newPatterns", true],
+    ["stories", true],
+    ["education", true],
+    ["b2b", true],
+    ["custom", true],
+    ["newsletter", true],
+  ] as [HomeSection["key"], boolean][]
+).map(([key, enabled], i) => ({ key, enabled, order: i + 1 }));
 
 export const banners: Banner[] = [
   { id: "banner-free-shipping", title: L("ارسال رایگان", "Free shipping"), text: L("برای سفارش‌های کالکشن اختصاصی بالای ۲ میلیون تومان", "On exclusive collection orders over $120"), href: "/shop", enabled: true, placement: "shop" },
